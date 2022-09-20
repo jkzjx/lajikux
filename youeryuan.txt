@@ -1,0 +1,126 @@
+:
+package 项目管理;
+import java.util.ArrayList;
+interface IParams {
+    //获取大班名额
+	public int getBig();
+	// 获取中班名额
+	public int getMedium();
+	// 获取小班名额
+	public int getSmall();
+	// 获取入学序列，例如 [1 2 2 3] 表示依次报名入学一名大班、中班、中班、小班学生
+	public ArrayList<Integer> getPlanSignUp();
+	        }	
+:
+package 项目管理;
+	//报名入学接口
+	public interface ISignUp{
+		//打印输出结果
+		public void print();
+		//检查是否有stuType对应的班级名额
+		//如果没有剩余名额，请返回false，否则学生将报名进入该班级并返回true
+		public boolean addStudent(int stuType);
+		//解析命令行输入的参数（格式），如文档描述
+		public static IParams parse()throws Exception{
+			return null;
+		}
+	}
+:
+package 项目管理;
+import java.util.ArrayList;
+public class main{
+	public static void main(String[] args) throws Exception {
+        IParams params = SchoolSystem.parse();
+        SchoolSystem sc = new SchoolSystem (params.getBig(), params.getMedium(),params.getSmall());
+        ArrayList<Integer> plan = params.getPlanSignUp ();
+        for (int i = 0; i < plan.size(); i++) {
+            sc.addStudent (plan.get(i));
+        }
+        sc.print();
+    }
+}
+:
+package 项目管理;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class SchoolSystem implements ISignUp,IParams{
+	int big,medium,small;
+	static Scanner s=new Scanner(System.in);
+	ArrayList<Integer> list = new ArrayList<>();
+    ArrayList<String> str = new ArrayList<>();
+
+    public SchoolSystem(int big, int medium, int small) {
+        this.big = big;
+        this.medium = medium;
+        this.small = small;
+    }
+
+    public boolean addStudent(int stuType) {
+        if (stuType < 1 || stuType > 3) {
+            str.add("null");
+            return false;
+        }
+
+        if (stuType == 1 && big > 0) {
+            list.add(1);
+            str.add("true");
+            big--;
+            return true;
+
+        } else if (stuType == 2 && medium > 0) {
+            list.add(2);
+            str.add("true");
+            medium--;
+            return true;
+        } else if (stuType == 3 && small > 0) {
+            list.add(3);
+            str.add("true");
+            small--;
+            return true;
+        }
+
+        str.add("false");
+        return false;
+    }
+
+    String[] parse(String input) {
+        String[] name = input.split(",");
+        return name;
+    }
+
+    public static IParams parse() throws Exception {
+        System.out.print("输入大，中，小班幼儿园的剩余名额:\n");
+        return new SchoolSystem(s.nextInt(), s.nextInt(), s.nextInt());
+    }
+
+    @Override
+    public void print() {
+        System.out.println(str);
+    }
+
+    @Override
+    public int getBig() {
+        return this.big;
+    }
+
+    @Override
+    public int getMedium() {
+        return this.medium;
+    }
+
+    @Override
+    public int getSmall() {
+        return this.small;
+    }
+
+    @Override
+    public ArrayList<Integer> getPlanSignUp() {
+        System.out.println("输入学生姓名:");
+        int n = parse(s.next()).length;
+        System.out.print("输入想进入的班级:\n");
+        for (int i = 0; i < n; i++) {
+            list.add(s.nextInt());
+        }
+        return list;
+   
